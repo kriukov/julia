@@ -13,6 +13,7 @@ Interval(x) = Interval(x, x)
 
 # Addition
 
+<<<<<<< HEAD
 prec = Float64
 
 function +(x::Interval, y::Interval) 
@@ -20,11 +21,19 @@ function +(x::Interval, y::Interval)
 	x.lo + y.lo
     end
     z2 = with_rounding(prec, RoundUp) do
+=======
+function +(x::Interval, y::Interval) 
+    z1 = with_rounding(Float64, RoundDown) do
+	x.lo + y.lo
+    end
+    z2 = with_rounding(Float64, RoundUp) do
+>>>>>>> ee0c9329e2dffe34a508be927492c69c01433058
 	x.hi + y.hi
     end
     Interval(z1, z2)
 end
 
+<<<<<<< HEAD
 function +(x::Interval, y::prec) 
     x + Interval(y)
 end
@@ -41,11 +50,21 @@ function -(x::Interval, y::Interval)
 	x.lo - y.hi
     end
     z2 = with_rounding(prec, RoundUp) do
+=======
+# Subtraction
+
+function -(x::Interval, y::Interval) 
+    z1 = with_rounding(Float64, RoundDown) do
+	x.lo - y.hi
+    end
+    z2 = with_rounding(Float64, RoundUp) do
+>>>>>>> ee0c9329e2dffe34a508be927492c69c01433058
 	x.hi - y.lo
     end
     Interval(z1, z2)
 end
 
+<<<<<<< HEAD
 function -(x::Interval, y::prec) 
     x - Interval(y)
 end
@@ -71,11 +90,21 @@ function *(x::Interval, y::Interval)
 	min(x.lo*y.lo, x.lo*y.hi, x.hi*y.lo, x.hi*y.hi)
     end
     z2 = with_rounding(prec, RoundUp) do
+=======
+# Multiplication
+
+function *(x::Interval, y::Interval)
+    z1 = with_rounding(Float64, RoundDown) do
+	min(x.lo*y.lo, x.lo*y.hi, x.hi*y.lo, x.hi*y.hi)
+    end
+    z2 = with_rounding(Float64, RoundUp) do
+>>>>>>> ee0c9329e2dffe34a508be927492c69c01433058
 	max(x.lo*y.lo, x.lo*y.hi, x.hi*y.lo, x.hi*y.hi)
     end
     Interval(z1, z2)
 end
 
+<<<<<<< HEAD
 function *(x::Interval, y::prec)
     x*Interval(y)
 end
@@ -92,11 +121,21 @@ function /(x::Interval, y::Interval)
 	1/y.hi
     end
     z2 = with_rounding(prec, RoundUp) do
+=======
+# Division
+
+function /(x::Interval, y::Interval) 
+    z1 = with_rounding(Float64, RoundDown) do
+	1/y.hi
+    end
+    z2 = with_rounding(Float64, RoundUp) do
+>>>>>>> ee0c9329e2dffe34a508be927492c69c01433058
 	1/y.lo
     end
     x*Interval(z1, z2)
 end
 
+<<<<<<< HEAD
 function /(x::Interval, y::prec)
     x/Interval(y)
 end
@@ -106,11 +145,17 @@ function /(x::prec, y::Interval)
 end
 
 
+=======
+>>>>>>> ee0c9329e2dffe34a508be927492c69c01433058
 ## Interval properties
 
 # Whether the point belongs to the interval
 
+<<<<<<< HEAD
 function belong(p::prec, x::Interval)
+=======
+function belong(p::Float64, x::Interval)
+>>>>>>> ee0c9329e2dffe34a508be927492c69c01433058
     if p >= x.lo && p <= x.hi
 	return true
     else return false
@@ -218,6 +263,7 @@ end
 cos(x::Interval) = sin(Interval(x.lo + pi/2, x.hi + pi/2))
 
 
+<<<<<<< HEAD
 import Base.complex
 complex(x::Interval) = Interval(complex(x.lo), complex(x.hi))
 
@@ -229,5 +275,18 @@ end
 function /(x::Array{Any, 1}, y::Interval)
     [x[1]/y, x[2]/y]
 end
+=======
+
+
+
+
+
+
+
+
+
+
+
+>>>>>>> ee0c9329e2dffe34a508be927492c69c01433058
 
 
