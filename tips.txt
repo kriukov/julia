@@ -1,0 +1,63 @@
+Bigfloat rounding:
+
+set_rounding(prec, RoundDown)
+
+
+AD:
+
+
+julia> a = 3
+3
+
+julia> x = ad(a, 1)
+ad(3,1)
+
+julia> f(x)
+ad(25,18)
+
+julia> differentiate(f, a)
+ERROR: differentiate not defined
+
+julia> differentiate(f, a) = f(ad(a, 1))
+differentiate (generic function with 1 method)
+
+julia> differentiate(f, 3)
+ad(25,18)
+
+julia> differentiate(f, a) = f(ad(a, 1)).up
+differentiate (generic function with 1 method)
+
+julia> differentiate(f, 3)
+18
+
+
+Intervals in AD:
+
+julia> include("interval.jl"); include("ad.jl")
+- (generic function with 146 methods)
+
+julia> f(x) = 3.0*x*x + 2.0
+f (generic function with 1 method)
+
+julia> f(ad(3,1))
+ad(29.0,18.0)
+
+julia> a = Interval(3.)
+Interval(3.0,3.0)
+
+julia> f(ad(a,1))
+ERROR: no method *(Interval, Int64)
+ in * at operators.jl:82
+ in f at none:1
+
+julia> f(ad(a,1.))
+ad(Interval(29.0,29.0),Interval(18.0,18.0))
+
+julia> a = Interval(3., 3.001)
+Interval(3.0,3.001)
+
+julia> f(ad(a,1.))
+ad(Interval(29.0,29.018003),Interval(18.0,18.006))
+
+
+

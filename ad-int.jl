@@ -1,6 +1,4 @@
-## Automatic differentiation
-
-# First define the point (a = ...), then include("ad.jl"). Then define f(x). f(x) will then output ad(f(x), f'(x)).
+## Automatic differentiation (interval version)
 
 type ad
     u
@@ -8,9 +6,8 @@ type ad
 end
 
 ad(c) = ad(c, Interval(0.0))
-x = ad(a, Interval(1.0))
 
-prec = Interval
+# x = ad(a, Interval(1.0))
 
 function +(x::ad, y::ad)
     ad(x.u + y.u, x.up + y.up)
@@ -28,31 +25,43 @@ function /(x::ad, y::ad)
     ad(x.u/y.u, (x.up - (x.u/y.u)*y.up)/y.u)
 end
 
-function *(x::ad, y::prec)
+# Multiplying by numbers (intervals)
+
+function *(x::ad, y::Interval)
     ad(x.u*y, x.up*y)
 end
 
-function *(x::prec, y::ad)
+function *(x::Interval, y::ad)
     ad(x*y.u, x*y.up)
 end
 
-function +(x::prec, y::ad)
+function +(x::Interval, y::ad)
     ad(x) + y
 end
 
-function +(x::ad, y::prec)
+function +(x::ad, y::Interval)
     x + ad(y)
 end
 
-function -(x::prec, y::ad)
+function -(x::Interval, y::ad)
     ad(x) - y
 end
 
-function -(x::ad, y::prec)
+function -(x::ad, y::Interval)
     x - ad(y)
 end
 
 # Chain rule
 
-# ad(x::ad) = ad() don't know yet
+g(x::ad) = ad(g.u(x.u), x.up*g.up(x.u))
 
+# Elementary functions
+
+sin(x::ad) = ad(sin(x.u), x.up*cos(x.u))
+cos(x::ad) = ad(cos(x.u), -x.up*sin(x.u))
+e^(x::ad) = ad(e^x.u, x.up*e^x.u)
+exp(x::ad) = ad(exp(x.u), x.up*exp(x.u))
+log(x::ad) = ad(log(x.u), x.up/x.u)
+(x::ad)^y::Interval = ad(x.u^y, x.up*y*x.u^(y-1))
+
+differentiate(f, a) = f(ad(a, 1.)).up

@@ -8,9 +8,12 @@ type ad
 end
 
 ad(c) = ad(c, 0)
-x = ad(a, 1)
+
+# x = ad(a, 1)
 
 prec = Float64
+
+differentiate(f, a) = f(ad(a, 1)).up
 
 function +(x::ad, y::ad)
     ad(x.u + y.u, x.up + y.up)
