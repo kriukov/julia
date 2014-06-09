@@ -1,0 +1,17 @@
+2014-06-08T23:45:06 CDT 
+
+The Interval Newton Method (INM) code (newton-int.jl) works. However, there are small issues.
+
+The function sin x (x - cos x) in the interval [-10, 10] has 8 roots, namely +/-(3pi, 2pi, pi), 0 and the transcendental root of x = cos x (0.739...). Running the INM code for 9 times returns all the 8 roots, but the 10th iteration deletes the transcendental root. All subsequent iterations (~100) keep the other roots.
+
+The reason was found out by looking at the interval corresponding to the transcendental root at the 9th iteration:
+
+[0.7390851332151607, 0.7390851332151608]
+
+and the output of the N() function applied to it:
+
+[0.7390851332151605, 0.7390851332151606]
+
+These intervals do not intersect, so the intersection function outputs "false", which is thrown out in the next iteration.
+
+The reason for their intersection being an empty set may be incorrect rounding in N(), which also includes differentiate(). The rounding is implemented in interval.jl for all basic operations on intervals, so the files corresponding to the above-mentioned functions will be checked additionally.

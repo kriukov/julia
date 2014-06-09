@@ -16,6 +16,8 @@ push!(arr_a, a)
 
 # cycle
 
+
+
 arr_b = Interval[]
 
 for i = 1:length(arr_a)
