@@ -208,7 +208,14 @@ hull(x::Interval, y::Interval) = Interval(min(x.lo, y.lo), max(x.hi, y.hi))
 function isect(x::Interval, y::Interval)
     if x.hi < y.lo || y.hi < x.lo
 		return false
-    else return Interval(max(x.lo, y.lo), min(x.hi, y.hi))
+    else 
+	z1 = with_rounding(prec, RoundDown) do
+		max(x.lo, y.lo)
+    end
+    z2 = with_rounding(prec, RoundUp) do
+		min(x.hi, y.hi)
+    end 
+    return Interval(z1, z2)
     end
 end
 
@@ -218,12 +225,16 @@ function isectext(x::Interval, y::Interval)
 	if x.hi < x.lo && y.hi >= y.lo # x is an extended interval and y is a normal one
 		if y.lo <= x.hi && x.lo <= y.hi
 			return [Interval(y.lo, x.hi), Interval(x.lo, y.hi)]
-		elseif y.lo > x.hi && x.lo <= y.hi
+		elseif y.lo > x.hi && x.lo <= y.hi && y.lo <= x.lo
 			return Interval(x.lo, y.hi)
-		elseif y.lo <= x.hi && x.lo > y.hi
+		elseif y.lo <= x.hi && x.lo > y.hi && y.hi >= x.hi
 			return Interval(y.lo, x.hi)
 		elseif y.lo > x.hi && x.lo > y.hi
-			return false	
+			return false
+		elseif y.lo <= x.hi && x.lo > y.hi && y.hi < x.hi
+			return y
+		elseif y.lo > x.hi && x.lo <= y.hi && y.lo > x.lo
+			return y
 		end
 	elseif x.hi < x.lo && y.hi < y.lo # both intervals are extended
 		return Interval(max(x.lo, y.lo), min(x.hi, y.hi)) # Returns also an extended interval
