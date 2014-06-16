@@ -1,8 +1,21 @@
 ## Interval arithmetic
 
+typealias prec Float64
+
 type Interval
     lo
     hi
+
+    function Interval(a, b)
+        set_rounding(prec, RoundDown)
+        lo = float("$a")
+
+        set_rounding(prec, RoundUp)
+        hi = float("$b")
+
+        new(lo, hi)
+    end
+
 end
 
 # Thin (degenerate) interval
@@ -10,7 +23,6 @@ end
 Interval(x) = Interval(x, x)
 
 # set_bigfloat_precision(100)
-typealias prec Float64
 
 # The four operations on intervals. Left end is rounded down, right end is rounded up.
 
