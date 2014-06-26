@@ -3,34 +3,49 @@
 include("interval.jl")
 include("ad-int.jl")
 
-N(x) = Interval(mid(x)) - f(Interval(mid(x)))//differentiate(f, x)
-arr_a = Interval[]
-arr_b = Interval[]
-do_isect(x, y) = isectext(arr_a[x], arr_b[y])
+println("Syntax: newton(Interval(lo, hi), calls)")
 
-a = Interval(-10, 10.001)
-x = ad(a, Interval(1.))
-f(x) = sin(x)*(x - cos(x))
+function newton(a, calls)
 
-push!(arr_a, a)
+	center(x) = Interval(mid(x))
+	N(x) = center(x) - f(center(x))//differentiate(f, x)
+	do_isect(x, y) = isectext(arr_a[x], arr_b[y])
 
-# cycle
-
-
-
-arr_b = Interval[]
-
-for i = 1:length(arr_a)
-	push!(arr_b, N(arr_a[i]))
-end
-
-arr_a_new = Interval[]
-
-for i = 1:length(arr_b)
-	if do_isect(i, i) != false
-		arr_a_new = vcat(arr_a_new, do_isect(i, i))
+	# If a is symmetric, i.e., mid(a) = 0, the process may stall. The initial interval should be slightly asymmetrized then
+	if mid(a) == 0
+		a = Interval(a.lo, a.hi + 0.0001*mag(a))
 	end
+
+	#a = Interval(down, up)
+	x = ad(a, Interval(1.))
+	#f(x) = sin(x)*(x - cos(x))
+
+	arr_a = Interval[]
+	arr_b = Interval[]
+
+	push!(arr_a, a)
+
+	# cycle
+	k = 0
+	while k <= calls
+
+		arr_b = Interval[]
+
+		for i = 1:length(arr_a)
+			push!(arr_b, N(arr_a[i]))
+		end
+
+		arr_a_new = Interval[]
+
+		for i = 1:length(arr_b)
+			if do_isect(i, i) != false
+				arr_a_new = vcat(arr_a_new, do_isect(i, i))
+			end
+		end
+
+		arr_a = arr_a_new
+		k += 1
+	end
+
+	println(arr_a)
 end
-
-arr_a = arr_a_new
-
